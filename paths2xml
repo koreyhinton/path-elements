@@ -1,0 +1,85 @@
+#!/usr/bin/env python3
+
+# GNU AFFERO GENERAL PUBLIC LICENSE Version 3
+# (see COPYING file)
+
+from lxml import etree
+import io
+
+def paths2xml(nlSepFilePathsStr, compressed=False):
+    def filltree(dictionary, el):
+        d = dictionary
+        # print(dictionary)
+        # exit(1)
+        for key in d:
+            subel = etree.SubElement(el, key)
+            filltree(d[key], subel)
+        return
+    s = nlSepFilePathsStr
+    rootEl = etree.Element('paths')
+    tree = etree.ElementTree(rootEl)
+    dict = {}
+    for path in io.StringIO(s):
+        if len(path.strip()) == 0:
+            continue
+        cleaned = path.replace("\n", "")
+        if cleaned.endswith("/"):
+            cleaned = cleaned[:-1]
+        if cleaned.startswith("/"):
+            cleaned = cleaned[1:]
+        subpaths = cleaned.split("/")
+        pointer = None
+        for subpath in subpaths:
+            if len(subpath.strip()) < 1:
+                print("invalid path:")
+                print(subpaths)
+                exit(1)
+            encoded = subpath.replace(" ", "---")
+            encoded = encoded.replace("~", "...")
+            encoded = encoded.replace("+", "PPP")  # PPPlus
+            encoded = encoded.replace("^", "CCC")  # CCCaret
+            encoded = encoded.replace("[", "LLL")  # LLLeft
+            encoded = encoded.replace("]", "RRR")  # RRRight
+            encoded = encoded.replace("$", "DDD")  # DDDollar
+            encoded = encoded.replace("(", "SSS")  # SSStart
+            encoded = encoded.replace(")", "EEE")  # EEEnd
+            encoded = encoded.replace("@", "AAA")  # AAAt
+            encoded = encoded.replace("#", "HHH")  # HHHash
+            encoded = encoded.replace("%", "TTT")  # percenTTT
+            encoded = encoded.replace(":", "OOO")  # cOOOlon
+            encoded = encoded.replace("!", "EEE")  # EEExclamation
+            encoded = encoded.replace("\\", "WWW")  # WWWindows
+            encoded = encoded.replace("=", "QQQ")  # eQQQuals
+            encoded = encoded.replace(",", "MMM")  # coMMMma
+            # an interesting test file found:
+            # /usr/local/lib/node_modules/phonegap/node_modules/phonegap-build/node_modules/shelljs/test/resources/ls/filename(with)[chars$]^that.must+be-escaped
+            # find /usr/local/lib/node_modules/phonegap/node_modules/phonegap-build/node_modules/shelljs/test/resources/ls/ -name "*escaped"  | paths2xml
+            if not encoded[0].isalpha() and encoded[0] != '_':
+                encoded = "___" + encoded
+            if pointer is None:
+                if encoded not in dict:
+                    dict[encoded] = {}
+                pointer = dict # [encoded]
+            if encoded not in pointer:
+                pointer[encoded] = {}
+            pointer = pointer[encoded]
+            # print(encoded)
+            # print(pointer)
+            # print(dict)
+            # exit(1)
+    filltree(dict, rootEl)
+    print(etree.tostring(tree, encoding='unicode', pretty_print=(not compressed)))
+def main():
+    import sys
+    compressed = False
+    if "-c" in sys.argv or "--compress" in sys.argv:
+        compressed = True
+    s = ""  # file paths string
+    nl = "" # newline
+    for line in sys.stdin:
+        s += (nl + line)
+        nl='\n'
+    paths2xml(s, compressed)
+
+if __name__ == '__main__':
+    main()

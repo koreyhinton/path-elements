@@ -1,0 +1,46 @@
+
+Copyright (C) Korey Hinton 2022
+
+
+DISCLAIMER
+
+This program is in no way meant to convert filepaths to xml and vice versa,
+and no guarantees given.
+
+The purpose of this is to be able to manually type in a small amount of data
+that has a tree/hierarchical structure, and store it in a path-like way for
+readability purposes. These programs will allow converting between the path
+form and xml form. Any weird characters will attempt to be encoded in the xml
+form.
+
+LICENSE
+
+GNU AFFERO GENERAL PUBLIC LICENSE Version 3
+
+(see COPYING file)
+
+REQUIREMENTS
+
+python 3
+
+INFO
+
+Every path component converted to xml gets its own xml element tag.
+
+Everything is simply just a tag, there is not xml tag content nor xml
+attributes.
+
+EXAMPLES
+
+The find command is a great way to quickly send test data through these
+programs.
+
+find /var -name "*" | paths2xml  # see the XML
+find /var -name "*" | paths2xml | xml2paths  # convert back to PATHs
+
+find /var -name "*" | paths2xml --compress  # see the compressed XML
+find /var -name "*" | paths2xml -c  # see the compressed XML
+
+find /var -name "*" | paths2xml | xml2paths --intermediate  # include
+                                                            # intermediate paths
+find /var -name "*" | paths2xml | xml2paths --i  # include intermediate paths

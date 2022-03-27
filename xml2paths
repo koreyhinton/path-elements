@@ -1,0 +1,65 @@
+#!/usr/bin/env python3
+
+# GNU AFFERO GENERAL PUBLIC LICENSE Version 3
+# (see COPYING file)
+
+from lxml import etree
+import io
+
+# find /var -name "*" | paths2xml | xml2paths
+
+def xml2paths(xmlStr, intermediate = False):
+    def printpath(path):
+        decoded = path
+        decoded = decoded.replace("/___","/")
+        decoded = decoded.replace("---"," ")
+        decoded = decoded.replace("...","~")
+        decoded = decoded.replace("PPP","+")  # PPPlus
+        decoded = decoded.replace("CCC","^")  # CCCaret
+        decoded = decoded.replace("LLL","[")  # LLLeft
+        decoded = decoded.replace("RRR","]")  # RRRight
+        decoded = decoded.replace("DDD","$")  # DDDollar
+        decoded = decoded.replace("SSS","(")  # SSStart
+        decoded = decoded.replace("EEE",")")  # EEEnd
+        decoded = decoded.replace("AAA","@")  # AAAt
+        decoded = decoded.replace("HHH","#")  # HHHash
+        decoded = decoded.replace("TTT","%")  # percenTTT
+        decoded = decoded.replace("OOO",":")  # cOOOlon
+        decoded = decoded.replace("EEE","!")  # EEExclamation
+        decoded = decoded.replace("WWW","\\")  # WWWindows
+        decoded = decoded.replace("QQQ","=")  # eQQQuals
+        decoded = decoded.replace("MMM",",")  # coMMMma
+        print(decoded)
+    def emptytree(node, pathstr, intermediate = False):
+        path = pathstr + node.tag
+        if node.getchildren():
+            if intermediate:
+                printpath(path)
+            for child in node:
+                emptytree(child, path+"/", intermediate)
+        else:
+            printpath(path)
+    xml = xmlStr
+    rootEl = etree.fromstring(xml)
+
+    for node in rootEl:
+        # .iter('*'):
+        # if 0 == len(node):
+        #    print(node.tag)
+        # key = node.tag
+        emptytree(node, "/", intermediate)
+
+def main():
+    import sys
+    s = ""  # file paths string
+    nl = "" # newline
+    intermediate = False
+    if "-i" in sys.argv or "--intermediate" in sys.argv:
+        intermediate = True
+    for line in sys.stdin:
+        s += (nl + line)
+        nl='\n'
+    xml2paths(s, intermediate)
+
+if __name__ == '__main__':
+    main()

@@ -30,6 +30,10 @@ Every path component converted to xml gets its own xml element tag.
 Everything is simply just a tag, there is not xml tag content nor xml
 attributes.
 
+DEMO
+
+The food chain (still work in progress;found in demo/index.html) is based on data found at https://prezi.com/xvjzl8obhmje/atlantic-rainforest-food-web/
+
 EXAMPLES
 
 The find command is a great way to quickly send test data through these

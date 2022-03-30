@@ -50,6 +50,7 @@ from path-like structured strings, and by overlapping similarly named
 The find command is a great way to quickly send test data through these
 programs.
 
+```sh
 find /var -name "*" | paths2xml  # see the XML
 find /var -name "*" | paths2xml | xml2paths  # convert back to PATHs
 
@@ -59,3 +60,4 @@ find /var -name "*" | paths2xml -c  # see the compressed XML
 find /var -name "*" | paths2xml | xml2paths --intermediate  # include
                                                             # intermediate paths
 find /var -name "*" | paths2xml | xml2paths --i  # include intermediate paths
+```

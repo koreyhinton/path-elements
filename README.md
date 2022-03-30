@@ -2,7 +2,7 @@
 Copyright (C) Korey Hinton 2022
 
 
-DISCLAIMER
+# DISCLAIMER
 
 This program is in no way meant to convert every filepath correctly to xml and vice versa, so no guarantees are given.
 
@@ -17,24 +17,24 @@ in the ancestor path components. If food chain data is desired, a
 straightforward approach would be to overlay the duplicates as is shown/done in
 the demo.
 
-LICENSE
+# LICENSE
 
 GNU AFFERO GENERAL PUBLIC LICENSE Version 3
 
 (see COPYING file)
 
-REQUIREMENTS
+# REQUIREMENTS
 
 python 3
 
-INFO
+# INFO
 
 Every path component converted to xml gets its own xml element tag.
 
 Everything is simply just a tag, there is not xml tag content nor xml
 attributes.
 
-DEMO
+# DEMO
 
 The food chain (found in demo/index.html) is based on data found at
 https://prezi.com/xvjzl8obhmje/atlantic-rainforest-food-web/
@@ -43,9 +43,9 @@ This demo shows file path structure to store the data can be parsed directly
 from path-like structured strings, and by overlapping similarly named
 (repeated) nodes, a food chain hierarchical graph can be displayed.
 
-![](demo/demo.png?raw=true)
+![](demo/demo.png?raw=true) 
 
-EXAMPLES
+# EXAMPLES
 
 The find command is a great way to quickly send test data through these
 programs.

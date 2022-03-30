@@ -4,14 +4,18 @@ Copyright (C) Korey Hinton 2022
 
 DISCLAIMER
 
-This program is in no way meant to convert filepaths to xml and vice versa,
-and no guarantees given.
+This program is in no way meant to convert every filepath correctly to xml and vice versa, so no guarantees are given.
 
-The purpose of this is to be able to manually type in a small amount of data
-that has a tree/hierarchical structure, and store it in a path-like way for
-readability purposes. These programs will allow converting between the path
-form and xml form. Any weird characters will attempt to be encoded in the xml
-form.
+The purpose of why I created this was to be able to store data with a food
+chain hierarchical structure in a clean file path structure.
+
+While these programs will allow converting between the path
+form and xml form and any xml-disallowed characters will attempted to be
+encoded in the xml form, when presenting xml form in a xml tree
+viewer it will repeat nodes that have a same named sub-component but differs
+in the ancestor path components. If food chain data is desired, a
+straightforward approach would be to overlay the duplicates as is shown/done in
+the demo.
 
 LICENSE
 
@@ -32,7 +36,14 @@ attributes.
 
 DEMO
 
-The food chain (still work in progress;found in demo/index.html) is based on data found at https://prezi.com/xvjzl8obhmje/atlantic-rainforest-food-web/
+The food chain (found in demo/index.html) is based on data found at
+https://prezi.com/xvjzl8obhmje/atlantic-rainforest-food-web/
+
+This demo shows file path structure to store the data can be parsed directly
+from path-like structured strings, and by overlapping similarly named
+(repeated) nodes, a food chain hierarchical graph can be displayed.
+
+![](demo/demo.png?raw=true)
 
 EXAMPLES
 

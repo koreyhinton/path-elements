@@ -4,6 +4,64 @@ var RGB_B=150;
 var RGB_G=200;
 var SVG=null;
 
+var DATA = {
+    daintree: [
+        "cougar/mountain-beaver/fern",
+        "cougar/mountain-beaver/berries",
+        "cougar/flying-squirrel/berries",
+        "cougar/flying-squirrel/fungi",
+        "cougar/flying-squirrel/acorn",
+        "cougar/red-tree-vole/douglas-fir-tree-needles",
+        "spotted-owl/red-tree-vole/doublas-fir-tree-needles",
+        "spotted-owl/winter-wren/aphid",
+        "spotted-owl/flying-squirrel/berries",
+        "spotted-owl/flying-squirrel/fungi",
+        "spotted-owl/flying-squirrel/acorn",
+        "black-tailed-deer/berries",
+        "black-tailed-deer/lichen",
+        "pleated-woodpecker/carpenter-ants",
+        "pleated-woodpecker/acorn"
+    ]/*based on data found at: https://daintreetropicalrainforest.weebly.com/*/,
+    atlantic: [
+        "jaguar/golden-lion-tamarin/medoncia-velloziana",
+        "jaguar/harpy-eagle/goliath-bird-eating-spider",
+        "jaguar/harpy-eagle/golden-lion-tamarin/medoncia-velloziana",
+        "orchid-bee/tibouchina-tree",
+        "helmeted-woodpecker/strangler-fig",
+        "helmeted-woodpecker/claudina-butterfly/tibouchina-tree",
+        "helmeted-woodpecker/fruit-fly/medoncia-velloziana",
+        "jaguar/harpy-eagle/green-headed-tanger/brazilian-rosewood-tree",
+        "jaguar/harpy-eagle/blue-manakin/brazilian-rosewood-tree",
+        "jaguar/harpy-eagle/golden-lancehead-snake/blue-manakin/brazilian-rosewood-tree"
+    ],
+    congo: [
+        "crocodile/hippo/grass",
+        "lion/hippo/grass",
+        "lion/okapi/grass",
+        "leopard/okapi/grass",
+        "leopard/chimpanzee/grass",
+        "leopard/chimpanzee/fruit-tree",
+        "leopard/chimpanzee/insects-bugs/fruit-tree",
+        "frog/insects-bugs/fruit-tree"
+    ]/*based on data found at: https://prezi.com/zmgbyojlp50c/the-congo-rainforest/*/
+};
+
+function run() {
+    var id=document.getElementsByClassName("active")[0].id;
+    drawDemo(id, document.getElementById("graph_canvas"), true);
+    document.getElementById("run").style.visibility = "hidden";
+}
+
+function load(id) {
+    while (document.getElementsByClassName("active").length > 0) {
+        document.getElementsByClassName("active")[0].classList.remove("active");
+    }
+    var btn = document.getElementById(id);
+    btn.classList.add("active");
+    drawDemo(id, document.getElementById("graph_canvas"));
+    document.getElementById("run").style.visibility = "visible";
+}
+
 function edge_move(edg, mvX, mvY, strandId) {
     if (edg.strandId !== strandId) return;
 
@@ -142,9 +200,13 @@ const cyrb53 = function(str, seed = 0) {
     return 4294967296 * (2097151 & h2) + (h1>>>0);
 };
 TSH=s=>{return cyrb53(s);}//{for(var i=0,h=9;i<s.length;)h=Math.imul(h^s.charCodeAt(i++),9**9);return h^h>>>9}
-function drawDemo(canv) {
+function drawDemo(dataSetId, canv, combine = false) {
+    if (SVG != null) {
+        SVG.remove();
+        canv.innerHTML = "";
+    }
     SVG = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    SVG.setAttribute('width', '1000px');
+    SVG.setAttribute('width', '2000px');
     SVG.setAttribute('height', '1000px');
     canv.appendChild(SVG);
     var strands = [];
@@ -153,18 +215,13 @@ function drawDemo(canv) {
     var uniq_node_ids=[];
     //var node2strands = {}; // todo:   nodeid: strandIds:[]
     var strandGroups = {};
-    var data = [
-        "jaguar/golden-lion-tamarin/medoncia-velloziana",
-        "jaguar/harpy-eagle/goliath-bird-eating-spider",
-        "jaguar/harpy-eagle/golden-lion-tamarin/medoncia-velloziana",
-        "orchid-bee/tibouchina-tree",
-        "helmeted-woodpecker/strangler-fig",
-        "helmeted-woodpecker/claudina-butterfly/tibouchina-tree",
-        "helmeted-woodpecker/fruit-fly/medoncia-velloziana",
-        "jaguar/harpy-eagle/green-headed-tanger/brazilian-rosewood-tree",
-        "jaguar/harpy-eagle/blue-manakin/brazilian-rosewood-tree",
-        "jaguar/harpy-eagle/golden-lancehead-snake/blue-manakin/brazilian-rosewood-tree"
-    ];
+
+    var data = DATA[dataSetId]; //= [
+//,
+    //];
+    // var data = [
+
+    // ];
 
     var map = {
     };
@@ -211,10 +268,10 @@ function drawDemo(canv) {
         var offset = Math.random() * 50;//32;
         return offset;
     }
-    console.log(map);
+
     var incr = 0;
     var x = 10;
-    var y = 10;
+    var y = 200;
     var captY = -1;
     for (var i=0; i<data.length; i++) {
         var names = data[i].split("/");
@@ -226,8 +283,8 @@ function drawDemo(canv) {
                 uniq_node_ids.push(names[j]);
             }
             node.el.style.position='absolute';
-            node.el.style.left=map[node.id].x + 'px'; //(x+randOf())+"px";
-            node.el.style.top=map[node.id].y + 'px';//(y+randOf())+"px";
+            node.el.style.left=(combine)?map[node.id].x + 'px':(x+randOf())+"px";
+            node.el.style.top=(combine)?map[node.id].y + 'px':(y+randOf())+"px";
             nodes.push(node);
             strands[i].push(node);
             if (lastNode != null) {
@@ -240,11 +297,11 @@ function drawDemo(canv) {
         }
         incr += 200;
         x += 200;
-        if (incr < 900) { y = 10; }
+        if (incr < 900) { y = 200; }
         else if (incr > 900 && incr < 900+200) { y += 200; x = 10; captY=y; }
         else { y = captY; }
     }
-    console.log(strands.length);
+
     for (var i=0; i<strands.length; i++) {
         for (var j=0; j<strands[i].length; j++) {
             var obj = strands[i][j];
@@ -253,10 +310,10 @@ function drawDemo(canv) {
                 path.setAttribute('stroke', 'rgb('+(RGB_R+'')+','+(RGB_B)+','+(RGB_G+'')+')');
                 //console.log(path);
             }
-            RGB_R = (RGB_R + 150) % 255;
-            RGB_G = (RGB_G + 100) % 255;
-            RGB_B = (RGB_B + 50) % 255;
         }
+        RGB_R = (RGB_R + 150) % 255;
+        RGB_G = (RGB_G + 100) % 255;
+        RGB_B = (RGB_B + 50) % 255;
     }
     
     // for (var i=0; i<uniq_node_ids.length;i++) {
@@ -328,5 +385,5 @@ function drawDemo(canv) {
 }
 
 window.addEventListener("DOMContentLoaded", function() {
-    drawDemo(document.getElementById("graph_canvas"));
+    drawDemo("daintree", document.getElementById("graph_canvas"));
 });

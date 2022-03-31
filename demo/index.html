@@ -1,9 +1,24 @@
 <!DOCTYPE html>
 <html>
   <head><script src="index.js"></script>
-    <style>a { border: 1px solid black; padding:4px; }</style>
+    <style>a { border: 1px solid black; padding:4px; }
+      button.active { background-color:forestgreen; }
+      button { background-color:white; }
+      button.run { background-color:cornflowerblue; }
+    </style>
   </head>
   <body>
+    <div style="position:absolute;left:20px;top:20px">
+      <p>Select Food Chain</p>
+      <p>
+        <button id='daintree' class="active" onclick="load(this.id)">Daintree Rainforest</button>
+        <button id='atlantic' onclick="load(this.id)">Atlantic Forest</button>
+        <button id='congo' onclick="load(this.id)">Congo Forest</button>
+      </p>
+      <p>
+        <button onclick="run()" id="run" class="run">Create Food Chain</button>
+      </p>
+    </div>
     <div id="graph_canvas"></div>
   </body>
 </html>

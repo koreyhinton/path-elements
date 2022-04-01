@@ -12,7 +12,7 @@ var DATA = {
         "cougar/flying-squirrel/fungi",
         "cougar/flying-squirrel/acorn",
         "cougar/red-tree-vole/douglas-fir-tree-needles",
-        "spotted-owl/red-tree-vole/doublas-fir-tree-needles",
+        "spotted-owl/red-tree-vole/douglas-fir-tree-needles",
         "spotted-owl/winter-wren/aphid",
         "spotted-owl/flying-squirrel/berries",
         "spotted-owl/flying-squirrel/fungi",
@@ -43,7 +43,17 @@ var DATA = {
         "leopard/chimpanzee/fruit-tree",
         "leopard/chimpanzee/insects-bugs/fruit-tree",
         "frog/insects-bugs/fruit-tree"
-    ]/*based on data found at: https://prezi.com/zmgbyojlp50c/the-congo-rainforest/*/
+    ]/*based on data found at: https://prezi.com/zmgbyojlp50c/the-congo-rainforest/*/,
+    tongass: [
+        "black-bear/pacific-salmon/grasshopper/grass",
+        "cammo-toad/grasshopper/grass",
+        "alaskan-wolf/yukon-moose/grass",
+        "mountain-lion/yukon-moose/grass",
+        "mountain-lion/barred-owl/snowshoe-hare",
+        "lynx/snowshoe-hare",
+        "alaskan-wolf/black-tailed-deer/grass",
+        "mountain-lion/black-tailed-deer/grass"
+    ]/*based on data found at: https://prezi.com/ujz9ufvb3yut/tongass-national-forest/ */
 };
 
 function run() {
@@ -237,7 +247,7 @@ function drawDemo(dataSetId, canv, combine = false) {
                 map[name].lcount = 0;
                 map[name].rcount = 0;
                 map[name].name = name;
-                map[name].hash = TSH(name+name+name+".%$#@!abcdefgh"+name+name);//-1000;
+                map[name].hash = TSH(name/*+name+name+".%$#@!abcdefgh"+name+name*/);//-1000;
             }
         }
     }
@@ -246,12 +256,35 @@ function drawDemo(dataSetId, canv, combine = false) {
         var o = map[key];
         for (var i=0; i<data.length; i++) {
             var path = data[i];
-            if (path.indexOf(o.name) > -1) {
-                var pair = path.split(o.name);
-                var lhs = pair[0];
-                var rhs = pair[1];
-                var lcount = lhs.split("/").length - 1;
-                var rcount = rhs.split("/").length - 1;
+
+            if (new RegExp("(^"+o.name+"[^A-z])|([^A-z]"+o.name+"[^A-z])|([^A-z]"+o.name+"$)").exec(path) !== null) {
+                //new RegExp("[^A-z\-]"+o.name+"[^A-z\-]").exec(path) !== null) {
+                //path.indexOf(o.name + "/") > -1 || path.indexOf("/" + o.name) > -1) {
+
+                var idx = new RegExp("(^"+o.name+"[^A-z])|([^A-z]"+o.name+"[^A-z])|([^A-z]"+o.name+"$)").exec(path).index;
+                var len = o.name.length;
+                var lhs = path.substring(0, idx);
+                var rhs = path.substring(idx+len);
+                var lcount = 0;
+                var rcount = 0;
+                // var splitstr = o.name;
+                // if (path.indexOf(o.name + "/") > -1) {
+                //     splitstr = o.name + "/";
+                //     rcount += 1;
+                // } else if (path.indexOf("/" + o.name + "/") > -1) {
+                //     splitstr = "/" + o.name + "/";
+                //     lcount += 1;
+                //     rcount += 1;
+                // } else {
+                //     splitstr = "/" + o.name;
+                //     lcount += 1;
+                // }
+                // var pair = path.split(splitstr);
+                // var lhs = pair[0];
+                // var rhs = pair[1];
+                if (o.name == "grass") console.log(lhs,rhs);
+                lcount += (lhs.split("/").length - 1);
+                rcount += (rhs.split("/").length - 1);
                 o.lcount = Math.max(lcount, o.lcount);
                 o.rcount = Math.max(rcount, o.lcount);
             }
@@ -260,8 +293,8 @@ function drawDemo(dataSetId, canv, combine = false) {
 
     for (var key in map) {
         var o = map[key];
-        o.x = ((Math.abs(o.hash)) % 1000);
-        o.y = /*center y*/400 - o.rcount*44 + o.lcount*144 + (o.x%44);//800 + (o.lcount*140) - (o.rcount*140) +((o.x%180));
+        o.x = ((Math.abs(o.hash)) % 64*Object.keys(map).length);//1000);
+        o.y = /*center y*/400 - o.rcount*77 + o.lcount*252 + (o.x%144);//800 + (o.lcount*140) - (o.rcount*140) +((o.x%180));
     }
 
     function randOf() {
@@ -315,7 +348,7 @@ function drawDemo(dataSetId, canv, combine = false) {
         RGB_G = (RGB_G + 100) % 255;
         RGB_B = (RGB_B + 50) % 255;
     }
-    
+    console.log(map);
     // for (var i=0; i<uniq_node_ids.length;i++) {
     //     var nodeId = uniq_node_ids[i];
     //     var baseX=-1000;

@@ -1,0 +1,115 @@
+#!/usr/bin/env python3
+
+# GNU AFFERO GENERAL PUBLIC LICENSE Version 3
+# (see COPYING file)
+
+def pathscompress(nlSepFilePathsStr, delimiter = '/'):
+    if len(delimiter) > 1:
+        delimiter = delimiter[0:1]
+    s = nlSepFilePathsStr
+    def maxhex(digits):
+        v = 16
+        for i in range(digits-1):
+            v = v*16
+        return v
+    paths = []
+    for line in s.split('\n'):
+        paths.append(line)
+
+    # twoFifths = (2.0/5.0) * len(s)  # ab/cd  -> 2 path comp. per 5 characters
+    digits = 1
+    # while twoFifths >= maxhex(digits):
+    #     digits += 1
+
+    legend = []
+    encoded = []
+    
+    d = {}
+
+    i = 0
+
+    for p in paths:
+        if len(p) == 0:
+            continue
+        if len(p.strip()) == 0:
+            encoded = encoded + p + '\n'
+            continue
+        e = ""
+        norm = p.rstrip()
+        if p.startswith("/"):
+            e = "/"
+            norm = p[1:]
+        if p.rstrip().endswith("/"):
+            while norm[-1].isspace():
+                norm = norm[:-1]
+            norm = norm[:-1]
+        subpaths = norm.split(delimiter)
+        for sp in subpaths:
+            if not sp in d:
+                hexval = f'{i:X}'
+                while len(hexval) < digits:
+                    hexval = '0' + hexval;
+                if len(hexval) > digits:
+                    digits = digits + 1
+                    for key in d:
+                        d[key] = '0' + d[key]
+                    for j in range(len(legend)):
+                        legend[j] = '0' + legend[j]
+                    for j in range(len(encoded)):
+                        encoded[j] = '0' + encoded[j]
+                d[sp] = hexval
+                i = i + 1
+                legend.append(d[sp] + sp)
+            e = e + d[sp]
+        if p.endswith("/"):
+            e = e + "/"
+        encoded.append(e)
+    # /var/opt
+    # <...>
+    # /var/lib
+    # .config/temp/
+
+    # /2
+    # 00var
+    # 01opt
+    # <...>
+    # A2var
+    # A3lib
+    # A4.config
+    # A5temp
+    # /
+    # /0001
+    # <...>
+    # /A2A3
+    # A4A5/
+
+    header = delimiter + "" + str(digits) + '\n'
+    return header + '\n'.join(legend) + '\n/\n' + '\n'.join(encoded)
+
+def main():
+    def getDataArg(args, argLong, argAbbr, default):
+        hit=False
+        for arg in args:
+            if hit:
+                return arg
+            if argAbbr == arg or argLong == arg:
+                hit=True
+        return default
+    import sys
+    outputFile = None
+    outputFile = getDataArg(sys.argv, "--output", "-o", None)
+    delimiter = getDataArg(sys.argv, "--delimiter", "-d", '/')
+    s = ""  # file paths string
+    nl = "" # newline
+    for line in sys.stdin:
+        s += (nl + line)
+        nl='\n'
+    text = pathscompress(s, delimiter)
+    if outputFile is None:
+        print(text)
+        return
+    with open(outputFile, 'wb') as f:
+        f.write(text.encode())
+
+if __name__ == '__main__':
+   main()

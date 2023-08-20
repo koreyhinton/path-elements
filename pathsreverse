@@ -1,0 +1,12 @@
+#!/usr/bin/env python3
+
+# GNU AFFERO GENERAL PUBLIC LICENSE Version 3
+# (see COPYING file)
+
+import sys
+import os
+
+for line in sys.stdin:
+    strandList = line.replace(os.linesep, '').split(os.sep)
+    strandList.reverse()
+    print((os.sep).join(strandList))
